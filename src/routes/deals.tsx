@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import {
-  Plus, Filter, CheckCircle, Clock, AlertTriangle, XCircle, ArrowUpRight,
-  FileCheck, Shield,
+  Plus, CheckCircle, Clock, AlertTriangle, XCircle, ArrowUpRight, FileCheck,
 } from "lucide-react";
 
 export const Route = createFileRoute("/deals")({
