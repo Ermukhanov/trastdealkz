@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
-  User, Shield, Star, TrendingUp, Award, FileCheck,
-  ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle, AlertTriangle,
+  User, Shield, Star, TrendingUp, Award,
+  ArrowUpRight, Clock, CheckCircle, XCircle, AlertTriangle,
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Tables } from "@/integrations/supabase/types";
