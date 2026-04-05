@@ -17,41 +17,103 @@ export type Database = {
       deals: {
         Row: {
           amount: number
+          category: string | null
           counterparty_wallet: string | null
           created_at: string
           deal_type: Database["public"]["Enums"]["deal_type"]
           description: string | null
           id: string
+          nft_mint_address: string | null
+          proof_description: string | null
+          proof_hash: string | null
           status: Database["public"]["Enums"]["deal_status"]
           title: string
+          tx_signature: string | null
           updated_at: string
           user_id: string
+          verdict_law_ref: string | null
+          verdict_percent: number | null
+          verdict_text: string | null
         }
         Insert: {
           amount: number
+          category?: string | null
           counterparty_wallet?: string | null
           created_at?: string
           deal_type?: Database["public"]["Enums"]["deal_type"]
           description?: string | null
           id?: string
+          nft_mint_address?: string | null
+          proof_description?: string | null
+          proof_hash?: string | null
           status?: Database["public"]["Enums"]["deal_status"]
           title: string
+          tx_signature?: string | null
           updated_at?: string
           user_id: string
+          verdict_law_ref?: string | null
+          verdict_percent?: number | null
+          verdict_text?: string | null
         }
         Update: {
           amount?: number
+          category?: string | null
           counterparty_wallet?: string | null
           created_at?: string
           deal_type?: Database["public"]["Enums"]["deal_type"]
           description?: string | null
           id?: string
+          nft_mint_address?: string | null
+          proof_description?: string | null
+          proof_hash?: string | null
           status?: Database["public"]["Enums"]["deal_status"]
           title?: string
+          tx_signature?: string | null
           updated_at?: string
           user_id?: string
+          verdict_law_ref?: string | null
+          verdict_percent?: number | null
+          verdict_text?: string | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          deal_id: string
+          id: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          deal_id: string
+          id?: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          deal_id?: string
+          id?: string
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
