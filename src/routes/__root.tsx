@@ -31,9 +31,9 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
+      { title: "TrustDeal AI — Next-Gen AI Deal Platform on Solana" },
+      { name: "description", content: "Secure agreements. AI arbitration. Escrow on Solana. NFT proof of completion." },
+      { name: "author", content: "TrustDeal AI" },
       { property: "og:title", content: "Lovable App" },
       { property: "og:description", content: "Lovable Generated Project" },
       { property: "og:type", content: "website" },
