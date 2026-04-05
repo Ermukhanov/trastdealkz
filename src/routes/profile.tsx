@@ -38,7 +38,7 @@ function ProfilePage() {
   }, []);
 
   const completedDeals = deals.filter((d) => d.status === "completed").length;
-  const activeDeals = deals.filter((d) => d.status === "active" || d.status === "pending").length;
+  const _activeDeals = deals.filter((d) => d.status === "active" || d.status === "pending").length;
   const totalVolume = deals.reduce((sum, d) => sum + Number(d.amount), 0);
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)

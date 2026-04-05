@@ -91,7 +91,7 @@ function DealsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-foreground truncate">{deal.title}</h3>
-                        {deal.nft_mint_address && <FileCheck className="h-4 w-4 text-brand-green shrink-0" title="NFT Сертификат" />}
+                        {deal.nft_mint_address && <FileCheck className="h-4 w-4 text-brand-green shrink-0" />}
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span>{deal.amount} SOL</span>
