@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User } from "lucide-react";
+import { streamChat } from "@/lib/ai-chat";
+import ReactMarkdown from "react-markdown";
 
 export const Route = createFileRoute("/ai-assistant")({
   component: AIAssistantPage,
@@ -10,7 +12,11 @@ type Message = { role: "user" | "assistant"; content: string };
 
 function AIAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Привет! Я TrustDeal AI ассистент. Я могу помочь вам с созданием сделок, анализом рисков и разрешением споров. Чем могу помочь?" },
+    {
+      role: "assistant",
+      content:
+        "Привет! 👋 Я **TrustDeal AI** ассистент. Могу помочь с созданием сделок, анализом рисков и разрешением споров. Чем могу помочь?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,26 +34,41 @@ function AIAssistantPage() {
     setInput("");
     setIsLoading(true);
 
-    // Simple AI responses based on keywords
-    const lowerInput = userMsg.content.toLowerCase();
-    let response = "";
+    let assistantSoFar = "";
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      const currentContent = assistantSoFar;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && prev.length > allMessages.length) {
+          return prev.map((m, i) =>
+            i === prev.length - 1 ? { ...m, content: currentContent } : m
+          );
+        }
+        return [...prev, { role: "assistant", content: currentContent }];
+      });
+    };
 
-    if (lowerInput.includes("сделк") || lowerInput.includes("deal")) {
-      response = "Для создания сделки вам нужно:\n\n1. **Определить условия** — опишите суть сделки\n2. **Указать сумму** — в SOL\n3. **Добавить участника** — по адресу кошелька\n4. **Подтвердить** — средства будут отправлены в эскроу\n\nAI автоматически проанализирует сделку и присвоит TrustScore. Хотите создать сделку прямо сейчас?";
-    } else if (lowerInput.includes("эскроу") || lowerInput.includes("escrow")) {
-      response = "**Эскроу на Solana** работает через смарт-контракты:\n\n- 💰 Средства блокируются до выполнения условий\n- 🤖 AI мониторит прогресс сделки\n- ✅ Автоматическое освобождение при завершении\n- 🛡️ Защита от мошенничества\n\nСреднее время транзакции: **< 1 секунда**";
-    } else if (lowerInput.includes("nft") || lowerInput.includes("сертификат")) {
-      response = "**NFT Сертификаты** — это неизменяемое доказательство сделки:\n\n- 📜 Содержит все детали сделки\n- ✍️ Подписан TrustDeal AI\n- 🔗 Хранится на блокчейне Solana\n- 🔍 Верифицируем любым участником\n\nКаждый NFT уникален и может служить юридическим доказательством.";
-    } else if (lowerInput.includes("привет") || lowerInput.includes("hello") || lowerInput.includes("hi")) {
-      response = "Привет! 👋 Я ваш AI ассистент для TrustDeal. Могу помочь с:\n\n- 📝 Создание и управление сделками\n- 💼 Анализ рисков и TrustScore\n- ⚖️ Арбитраж и разрешение споров\n- 📊 Статистика и аналитика\n\nЧто вас интересует?";
-    } else {
-      response = `Спасибо за ваш вопрос! На основе анализа:\n\n**TrustDeal AI рекомендует:**\n\n- Используйте эскроу для защиты средств\n- Проверяйте TrustScore участников\n- Все сделки верифицируются AI автоматически\n\nМогу подробнее рассказать о любой функции платформы. Что именно вас интересует?`;
+    try {
+      await streamChat({
+        messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
+        onDelta: (chunk) => upsertAssistant(chunk),
+        onDone: () => setIsLoading(false),
+        onError: (err) => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: `⚠️ ${err}` },
+          ]);
+          setIsLoading(false);
+        },
+      });
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "⚠️ Произошла ошибка. Попробуйте позже." },
+      ]);
+      setIsLoading(false);
     }
-
-    // Simulate typing delay
-    await new Promise((r) => setTimeout(r, 800 + Math.random() * 1200));
-    setMessages([...allMessages, { role: "assistant", content: response }]);
-    setIsLoading(false);
   };
 
   return (
@@ -55,23 +76,36 @@ function AIAssistantPage() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="mx-auto max-w-3xl space-y-4">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                msg.role === "assistant" ? "bg-gradient-purple" : "bg-secondary"
-              }`}>
-                {msg.role === "assistant" ? <Bot className="h-4 w-4 text-primary-foreground" /> : <User className="h-4 w-4 text-foreground" />}
+            <div
+              key={i}
+              className={`flex gap-3 animate-fade-in ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+            >
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                  msg.role === "assistant" ? "bg-gradient-purple" : "bg-secondary"
+                }`}
+              >
+                {msg.role === "assistant" ? (
+                  <Bot className="h-4 w-4 text-primary-foreground" />
+                ) : (
+                  <User className="h-4 w-4 text-foreground" />
+                )}
               </div>
-              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-                msg.role === "assistant"
-                  ? "glass-card text-foreground"
-                  : "bg-gradient-purple text-primary-foreground"
-              }`}>
-                <div className="whitespace-pre-wrap">{msg.content}</div>
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                  msg.role === "assistant"
+                    ? "glass-card text-foreground"
+                    : "bg-gradient-purple text-primary-foreground"
+                }`}
+              >
+                <div className="prose prose-sm prose-invert max-w-none">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
               </div>
             </div>
           ))}
-          {isLoading && (
-            <div className="flex gap-3">
+          {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+            <div className="flex gap-3 animate-fade-in">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-purple">
                 <Bot className="h-4 w-4 text-primary-foreground" />
               </div>
@@ -93,9 +127,9 @@ function AIAssistantPage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
             placeholder="Задайте вопрос AI ассистенту..."
-            className="flex-1 rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple"
+            className="flex-1 rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors"
           />
           <button
             onClick={handleSend}
