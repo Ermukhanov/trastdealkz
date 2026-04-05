@@ -11,21 +11,28 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content: `Ты — TrustDeal AI ассистент, умный помощник на платформе TrustDeal. 
+    // Try user's OpenAI key first, fallback to Lovable AI
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+
+    let apiUrl: string;
+    let apiKey: string;
+    let model: string;
+
+    if (OPENAI_API_KEY) {
+      apiUrl = "https://api.openai.com/v1/chat/completions";
+      apiKey = OPENAI_API_KEY;
+      model = "gpt-4o-mini";
+    } else if (LOVABLE_API_KEY) {
+      apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
+      apiKey = LOVABLE_API_KEY;
+      model = "google/gemini-3-flash-preview";
+    } else {
+      throw new Error("No API key configured (OPENAI_API_KEY or LOVABLE_API_KEY)");
+    }
+
+    const systemPrompt = `Ты — TrustDeal AI ассистент, умный помощник на платформе TrustDeal. 
 Платформа позволяет создавать безопасные сделки с эскроу на блокчейне Solana.
 Ты помогаешь пользователям с:
 - Созданием и управлением сделками
@@ -34,8 +41,18 @@ serve(async (req) => {
 - NFT сертификатами
 - Работой с кошельком Solana
 
-Отвечай кратко, по делу, на русском языке. Используй эмодзи и markdown для форматирования.`,
-          },
+Отвечай кратко, по делу, на русском языке. Используй эмодзи и markdown для форматирования.`;
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: systemPrompt },
           ...messages,
         ],
         stream: true,
@@ -50,14 +67,14 @@ serve(async (req) => {
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Недостаточно средств. Пополните баланс Lovable AI." }), {
+        return new Response(JSON.stringify({ error: "Недостаточно средств на аккаунте API." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "Ошибка AI сервиса" }), {
+      console.error("AI API error:", response.status, t);
+      return new Response(JSON.stringify({ error: `AI API error: ${response.status}` }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
