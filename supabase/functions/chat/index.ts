@@ -82,14 +82,14 @@ serve(async (req) => {
     let apiKey: string;
     let model: string;
 
-    if (OPENAI_API_KEY) {
-      apiUrl = "https://api.openai.com/v1/chat/completions";
-      apiKey = OPENAI_API_KEY;
-      model = "gpt-4o-mini";
-    } else if (LOVABLE_API_KEY) {
+    if (LOVABLE_API_KEY) {
       apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
       apiKey = LOVABLE_API_KEY;
       model = "google/gemini-3-flash-preview";
+    } else if (OPENAI_API_KEY) {
+      apiUrl = "https://api.openai.com/v1/chat/completions";
+      apiKey = OPENAI_API_KEY;
+      model = "gpt-4o-mini";
     } else {
       throw new Error("No API key configured");
     }
