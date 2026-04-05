@@ -13,6 +13,7 @@ import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CreateDealRouteImport } from './routes/create-deal'
 import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -36,6 +37,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreateDealRoute = CreateDealRouteImport.update({
+  id: '/create-deal',
+  path: '/create-deal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiAssistantRoute = AiAssistantRouteImport.update({
   id: '/ai-assistant',
   path: '/ai-assistant',
@@ -50,6 +56,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-assistant': typeof AiAssistantRoute
+  '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/profile': typeof ProfileRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-assistant': typeof AiAssistantRoute
+  '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/profile': typeof ProfileRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai-assistant': typeof AiAssistantRoute
+  '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/profile': typeof ProfileRoute
@@ -77,16 +86,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai-assistant'
+    | '/create-deal'
     | '/dashboard'
     | '/deals'
     | '/profile'
     | '/wallet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai-assistant' | '/dashboard' | '/deals' | '/profile' | '/wallet'
+  to:
+    | '/'
+    | '/ai-assistant'
+    | '/create-deal'
+    | '/dashboard'
+    | '/deals'
+    | '/profile'
+    | '/wallet'
   id:
     | '__root__'
     | '/'
     | '/ai-assistant'
+    | '/create-deal'
     | '/dashboard'
     | '/deals'
     | '/profile'
@@ -96,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiAssistantRoute: typeof AiAssistantRoute
+  CreateDealRoute: typeof CreateDealRoute
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
   ProfileRoute: typeof ProfileRoute
@@ -132,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/create-deal': {
+      id: '/create-deal'
+      path: '/create-deal'
+      fullPath: '/create-deal'
+      preLoaderRoute: typeof CreateDealRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai-assistant': {
       id: '/ai-assistant'
       path: '/ai-assistant'
@@ -152,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiAssistantRoute: AiAssistantRoute,
+  CreateDealRoute: CreateDealRoute,
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
   ProfileRoute: ProfileRoute,
