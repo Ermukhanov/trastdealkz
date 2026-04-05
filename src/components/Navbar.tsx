@@ -1,5 +1,8 @@
-import { Link, useLocation } from "@tanstack/react-router";
-import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn } from "lucide-react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
@@ -12,6 +15,21 @@ const navItems = [
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    supabase.auth.getUser().then(({ data: { user: u } }) => setUser(u));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -44,24 +62,28 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-1 rounded-lg border border-border p-1 sm:flex">
-            {["EN", "РУ", "ҚЗ"].map((lang) => (
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden text-sm text-muted-foreground sm:block">
+                {user.email?.split("@")[0]}
+              </span>
               <button
-                key={lang}
-                className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-                  lang === "EN"
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
               >
-                {lang}
+                <LogOut className="h-4 w-4" />
+                Выйти
               </button>
-            ))}
-          </div>
-          <button className="flex items-center gap-2 rounded-lg bg-gradient-purple px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
-            <LogIn className="h-4 w-4" />
-            Sign In
-          </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 rounded-lg bg-gradient-purple px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <LogIn className="h-4 w-4" />
+              Войти
+            </Link>
+          )}
         </div>
       </div>
     </nav>

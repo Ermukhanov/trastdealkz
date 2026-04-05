@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CreateDealRouteImport } from './routes/create-deal'
@@ -25,6 +26,11 @@ const WalletRoute = WalletRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/wallet': typeof WalletRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/wallet': typeof WalletRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/wallet': typeof WalletRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/login'
     | '/profile'
     | '/wallet'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/login'
     | '/profile'
     | '/wallet'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/login'
     | '/profile'
     | '/wallet'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   CreateDealRoute: typeof CreateDealRoute
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
+  LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   WalletRoute: typeof WalletRoute
 }
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   CreateDealRoute: CreateDealRoute,
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
+  LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   WalletRoute: WalletRoute,
 }
