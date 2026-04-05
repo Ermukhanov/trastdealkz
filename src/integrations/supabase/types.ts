@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      deals: {
+        Row: {
+          amount: number
+          counterparty_wallet: string | null
+          created_at: string
+          deal_type: Database["public"]["Enums"]["deal_type"]
+          description: string | null
+          id: string
+          status: Database["public"]["Enums"]["deal_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          counterparty_wallet?: string | null
+          created_at?: string
+          deal_type?: Database["public"]["Enums"]["deal_type"]
+          description?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          counterparty_wallet?: string | null
+          created_at?: string
+          deal_type?: Database["public"]["Enums"]["deal_type"]
+          description?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +61,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      deal_status: "pending" | "active" | "completed" | "disputed" | "cancelled"
+      deal_type: "escrow" | "direct" | "nft"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +189,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      deal_status: ["pending", "active", "completed", "disputed", "cancelled"],
+      deal_type: ["escrow", "direct", "nft"],
+    },
   },
 } as const
