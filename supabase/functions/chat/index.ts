@@ -36,10 +36,10 @@ const RK_LAWS_CONTEXT = `
 - TrustDeal AI действует как альтернативный арбитр — обе стороны добровольно соглашаются на AI-арбитраж при создании сделки.
 `;
 
-const SYSTEM_PROMPT = `Ты — TrustDeal AI, автономный AI-арбитр сделок на блокчейне Solana.
+const SYSTEM_PROMPT = `Ты — TrustDeal AI, автономный AI-арбитр сделок на блокчейне Solana. Ты работаешь на платформе TrustDeal — децентрализованной системе безопасных сделок.
 
 ## Твоя роль
-Ты анализируешь условия сделок, оцениваешь доказательства исполнения и выносишь решения со ссылкой на конкретные статьи законов Республики Казахстан.
+Ты анализируешь условия сделок, оцениваешь доказательства исполнения и выносишь решения со ссылкой на конкретные статьи законов Республики Казахстан. Ты также можешь видеть данные о транзакциях Solana и состоянии сделок в системе.
 
 ## Как ты работаешь
 1. Получаешь условия сделки и тип (поставка, фриланс, аренда, труд, логистика, e-commerce)
@@ -75,21 +75,23 @@ serve(async (req) => {
   try {
     const { messages } = await req.json();
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    const ALEM_AI_KEY = Deno.env.get("ALEM_AI_API_KEY");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     let apiUrl: string;
     let apiKey: string;
     let model: string;
 
-    if (LOVABLE_API_KEY) {
+    if (ALEM_AI_KEY) {
+      // Alem AI — primary
+      apiUrl = "https://llm.alem.ai/v1/chat/completions";
+      apiKey = ALEM_AI_KEY;
+      model = "gpt-4o-mini";
+    } else if (LOVABLE_API_KEY) {
+      // Lovable AI — fallback
       apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
       apiKey = LOVABLE_API_KEY;
       model = "google/gemini-3-flash-preview";
-    } else if (OPENAI_API_KEY) {
-      apiUrl = "https://api.openai.com/v1/chat/completions";
-      apiKey = OPENAI_API_KEY;
-      model = "gpt-4o-mini";
     } else {
       throw new Error("No API key configured");
     }
