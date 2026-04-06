@@ -86,7 +86,7 @@ serve(async (req) => {
       // Alem AI — primary
       apiUrl = "https://llm.alem.ai/v1/chat/completions";
       apiKey = ALEM_AI_KEY;
-      model = "gpt-4o-mini";
+      model = "alemllm";
     } else if (LOVABLE_API_KEY) {
       // Lovable AI — fallback
       apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
