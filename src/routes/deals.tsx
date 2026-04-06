@@ -130,7 +130,7 @@ function DealsPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })
           )}
