@@ -36,9 +36,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-green">
-            <span className="text-sm font-bold text-brand-green-foreground">●</span>
-          </div>
+          <img src={logoImg} alt="TrustDeal AI" className="h-9 w-9 rounded-full" width={36} height={36} />
           <span className="text-lg font-bold text-foreground">TrustDeal AI</span>
         </Link>
 
