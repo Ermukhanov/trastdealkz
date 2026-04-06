@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -23,9 +25,19 @@ const WalletRoute = WalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TransactionsRoute = TransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -66,7 +78,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +90,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
 }
 export interface FileRoutesById {
@@ -87,7 +103,9 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
 }
 export interface FileRouteTypes {
@@ -99,7 +117,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/login'
+    | '/notifications'
     | '/profile'
+    | '/transactions'
     | '/wallet'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -109,7 +129,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/login'
+    | '/notifications'
     | '/profile'
+    | '/transactions'
     | '/wallet'
   id:
     | '__root__'
@@ -119,7 +141,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deals'
     | '/login'
+    | '/notifications'
     | '/profile'
+    | '/transactions'
     | '/wallet'
   fileRoutesById: FileRoutesById
 }
@@ -130,7 +154,9 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
+  TransactionsRoute: typeof TransactionsRoute
   WalletRoute: typeof WalletRoute
 }
 
@@ -143,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/transactions': {
+      id: '/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof TransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -202,7 +242,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
+  TransactionsRoute: TransactionsRoute,
   WalletRoute: WalletRoute,
 }
 export const routeTree = rootRouteImport
