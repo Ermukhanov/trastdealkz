@@ -82,9 +82,11 @@ function DealsPage() {
               const sc = statusConfig[deal.status] || statusConfig.pending;
               const StatusIcon = sc.icon;
               return (
-                <div
+                <Link
                   key={deal.id}
-                  className="glass-card rounded-2xl p-6 transition-all hover:border-brand-purple/30 animate-fade-in"
+                  to="/deal/$dealId"
+                  params={{ dealId: deal.id }}
+                  className="glass-card rounded-2xl p-6 transition-all hover:border-brand-purple/30 animate-fade-in block"
                   style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
                 >
                   <div className="flex items-start justify-between gap-4">

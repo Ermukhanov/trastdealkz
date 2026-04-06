@@ -71,7 +71,13 @@ function CreateDealPage() {
       return;
     }
 
-    navigate({ to: "/deals" });
+    const { data: newDeals } = await supabase.from("deals").select("id").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1);
+    const newId = newDeals?.[0]?.id;
+    if (newId) {
+      navigate({ to: "/deal/$dealId", params: { dealId: newId } });
+    } else {
+      navigate({ to: "/deals" });
+    }
   };
 
   const update = (field: string, value: string) =>
