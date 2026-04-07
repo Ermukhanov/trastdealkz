@@ -57,7 +57,7 @@
 ┌────────────▼────────────────────────┐
 │  AI СЛОЙ (Supabase Edge Function)    │  ← Готов к запуску 🤖
 │                                       │
-│  Google Gemini LLM:                  │
+│  Alem LLM:                           │
 │  • Анализирует доказательства       │
 │  • Применяет законы РК автоматически │
 │  • Выдаёт вердикт в JSON             │
@@ -129,7 +129,7 @@ anchor deploy --provider.cluster devnet  # Запустит на Devnet
 
 ---
 
-### 🧠 AI СЛОЙ (Google Gemini + Supabase)
+### 🧠 AI СЛОЙ (Alem LLM + Supabase)
 
 **✅ ГОТОВ К ЗАПУСКУ**
 
@@ -141,7 +141,7 @@ anchor deploy --provider.cluster devnet  # Запустит на Devnet
    ↓
 2️⃣ Supabase Edge Function срабатывает
    ↓
-3️⃣ Google Gemini получает система-промпт:
+3️⃣ Alem LLM получает система-промпт:
    • Роль: AI-арбитр
    • 20+ законов РК: ГК РК ст. 349, 390, ТК РК ст. 95...
    • Контекст: детали сделки, доказательства обеих сторон
@@ -298,7 +298,7 @@ trastdealkz/
 │   ├── hooks/
 │   │   └── useSolana.ts        # Phantom + Solana devnet интеграция
 │   ├── services/
-│   │   ├── aiArbitration.ts    # AI анализ + Gemini API
+│   │   ├── aiArbitration.ts    # AI анализ + Alem API
 │   │   └── nftCertificate.ts   # SVG генерация + Memo Program
 │   └── components/
 │       └── TrustDealFlow.tsx   # Полный UI флоу (7 шагов)
@@ -325,7 +325,7 @@ trastdealkz/
 
 **Проект:** TrustDeal AI  
 **Автор:** Team TrustDeal  
-**Стек:** Anchor (Rust) + React 19 + Solana Web3.js + Google Gemini  
+**Стек:** Anchor (Rust) + React 19 + Solana Web3.js + Alem LLM  
 **Сеть:** Solana Devnet (готов к mainnet)  
 **Лицензия:** MIT
 
@@ -422,7 +422,7 @@ solana airdrop 2
 | Стилизация | Tailwind CSS v4 |
 | Wallet | Phantom + @solana/web3.js |
 | Backend | Supabase (PostgreSQL + Edge Functions) |
-| AI | Google Gemini via Supabase Edge Function |
+| AI | Alem LLM via Supabase Edge Function |
 | NFT | Metaplex Token Metadata (SVG сертификаты) |
 | On-chain проofs | Solana Memo Program |
 | Build | Vite 7, Bun |
@@ -454,7 +454,7 @@ trastdealkz/
 │       └── wallet.tsx           ← Кошелёк
 ├── supabase/
 │   └── functions/
-│       └── chat/               ← Edge function: AI арбитраж (Gemini)
+│       └── chat/               ← Edge function: AI арбитраж (Alem)
 ├── Anchor.toml
 └── README.md
 ```
