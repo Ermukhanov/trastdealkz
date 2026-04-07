@@ -1,15 +1,10 @@
-# 🔗 TrustDeal AI — Autonomous AI Arbitration on Solana
+# TrustDeal AI — Autonomous AI Escrow & Arbitration on Solana
 
-> **National Solana Hackathon 2026 · Case 2: AI + Blockchain**
-> 
-> **First autonomous AI arbitrator integrating Kazakhstani laws with Solana blockchain**
+> **National Solana Hackathon by Decentrathon 5.0 · Case 2: AI + Blockchain**
 
-[![Solana Devnet](https://img.shields.io/badge/Network-Solana%20Devnet-9945FF?logo=solana)](https://explorer.solana.com/?cluster=devnet)
+[![Solana Devnet](https://img.shields.io/badge/Solana-Devnet-9945FF?logo=solana)](https://explorer.solana.com/?cluster=devnet)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Built with Anchor](https://img.shields.io/badge/Tech-Anchor%200.30.1%20%2B%20React%2019-blue)](https://anchor-lang.com)
-[![Demo](https://img.shields.io/badge/Live-Demo-00E87A)](http://localhost:5173)
-
-**Status:** ✅ **Production Ready** | Code Complete (97%) | Smart Contract Tested | UI/UX Done | Docs Complete
+[![Built with Anchor](https://img.shields.io/badge/Built%20with-Anchor%200.30.1-blue)](https://anchor-lang.com)
 
 ---
 

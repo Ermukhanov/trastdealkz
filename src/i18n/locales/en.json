@@ -1,0 +1,44 @@
+{
+  "header": {
+    "title": "TrustDeal AI",
+    "subtitle": "Autonomous AI Arbitration on Solana",
+    "connectWallet": "🔗 Connect Phantom"
+  },
+  "hero": {
+    "title": "Resolve disputes in 30 seconds",
+    "description": "First autonomous AI arbitrator on Solana blockchain. Funds in escrow, AI analyzes evidence under Kazakhstan laws",
+    "getStarted": "🚀 Get Started"
+  },
+  "features": {
+    "escrow": "🏦 Secure Escrow",
+    "escrowDesc": "SOL frozen in smart contract, released only by AI verdict",
+    "ai": "🤖 AI Arbitrator",
+    "aiDesc": "Analyzes evidence under 20+ Kazakhstan laws in seconds",
+    "transparent": "✅ Transparency",
+    "transparentDesc": "All decisions recorded on-chain, verifiable on Solana Explorer",
+    "fast": "⚡ Speed",
+    "fastDesc": "No courts or lawyers. Resolution in 30 seconds",
+    "nft": "🎨 NFT Certificate",
+    "nftDesc": "Immutable deal certificate on blockchain",
+    "trust": "⭐ TrustScore",
+    "trustDesc": "Each user's reputation on-chain"
+  },
+  "process": {
+    "step1": "1️⃣ Create Deal",
+    "step2": "2️⃣ Deposit Escrow",
+    "step3": "3️⃣ Open Dispute",
+    "step4": "4️⃣ AI Analyzes",
+    "step5": "5️⃣ Verdict Executed",
+    "step6": "6️⃣ NFT Issued"
+  },
+  "stats": {
+    "users": "1500+ users",
+    "deals": "3200+ successful deals",
+    "saved": "$350K+ saved"
+  },
+  "footer": {
+    "github": "💻 GitHub",
+    "docs": "📚 Documentation",
+    "contact": "📧 Contact"
+  }
+}
