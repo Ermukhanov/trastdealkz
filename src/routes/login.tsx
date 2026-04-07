@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
