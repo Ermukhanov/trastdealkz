@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Shield, Zap, FileCheck, Package, Laptop, Briefcase, Home, Truck, ShoppingCart } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { ArrowLeft, Shield, Zap, FileCheck, Package, Laptop, Briefcase, Home, Truck, ShoppingCart, Loader2, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { createMemoTx, buildDealMemo, connection } from "@/lib/solana";
 
 export const Route = createFileRoute("/create-deal")({
   component: CreateDealPage,
@@ -19,8 +21,10 @@ const categories = [
 
 function CreateDealPage() {
   const navigate = useNavigate();
+  const { publicKey, sendTransaction, connected } = useWallet();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -54,7 +58,8 @@ function CreateDealPage() {
       return;
     }
 
-    const { error: insertError } = await supabase.from("deals").insert({
+    // Create deal in DB
+    const { data: newDeal, error: insertError } = await supabase.from("deals").insert({
       title: form.title.trim(),
       description: form.description.trim() || null,
       amount,
@@ -62,22 +67,38 @@ function CreateDealPage() {
       deal_type: form.deal_type,
       category: form.category,
       user_id: user.id,
-    });
+    }).select("id").single();
 
-    setIsSubmitting(false);
-
-    if (insertError) {
-      setError(insertError.message);
+    if (insertError || !newDeal) {
+      setError(insertError?.message || "Ошибка создания сделки");
+      setIsSubmitting(false);
       return;
     }
 
-    const { data: newDeals } = await supabase.from("deals").select("id").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1);
-    const newId = newDeals?.[0]?.id;
-    if (newId) {
-      navigate({ to: "/deal/$dealId", params: { dealId: newId } });
-    } else {
-      navigate({ to: "/deals" });
+    // Record on blockchain if wallet connected
+    if (publicKey && connected) {
+      try {
+        const memo = buildDealMemo(newDeal.id, "CREATE", `${amount}SOL|${form.category}`);
+        const tx = await createMemoTx({ signer: publicKey, memo });
+        const sig = await sendTransaction(tx, connection);
+        await connection.confirmTransaction(sig, "confirmed");
+        await supabase.from("deals").update({ tx_signature: sig }).eq("id", newDeal.id);
+      } catch (e) {
+        console.warn("Blockchain recording failed, deal created without on-chain record:", e);
+      }
     }
+
+    // Create notification
+    await supabase.from("notifications").insert({
+      user_id: user.id,
+      title: "Сделка создана",
+      message: `Сделка "${form.title.trim()}" на ${amount} SOL создана успешно`,
+      type: "deal_created",
+      deal_id: newDeal.id,
+    });
+
+    setIsSubmitting(false);
+    navigate({ to: "/deal/$dealId", params: { dealId: newDeal.id } });
   };
 
   const update = (field: string, value: string) =>
@@ -93,30 +114,46 @@ function CreateDealPage() {
         </Link>
 
         <div className="animate-fade-in">
-          <h1 className="text-3xl font-bold text-foreground">Создать сделку</h1>
-          <p className="mt-2 text-muted-foreground">AI автоматически подберёт законы РК для вашего типа сделки</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-purple glow-purple">
+              <Sparkles className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Создать сделку</h1>
+              <p className="text-sm text-muted-foreground">AI подберёт законы РК • Блокчейн запись</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className="mt-6 flex items-center gap-2 animate-fade-in" style={{ animationDelay: "80ms", animationFillMode: "both" }}>
+          {["Тип", "Детали", "Подтверждение"].map((s, i) => (
+            <div key={s} className="flex items-center gap-2 flex-1">
+              <div className={`h-1.5 rounded-full flex-1 transition-colors ${i <= step ? "bg-brand-purple" : "bg-secondary"}`} />
+            </div>
+          ))}
         </div>
 
         {/* Deal type */}
-        <div className="mt-8 grid grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
+        <div className="mt-6 grid grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
           {[
-            { type: "escrow" as const, label: "Эскроу", icon: Shield, desc: "Безопасная сделка" },
-            { type: "direct" as const, label: "Прямая", icon: Zap, desc: "Быстрый перевод" },
-            { type: "nft" as const, label: "NFT", icon: FileCheck, desc: "С сертификатом" },
+            { type: "escrow" as const, label: "Эскроу", icon: Shield, desc: "Безопасная сделка с блокчейном" },
+            { type: "direct" as const, label: "Прямая", icon: Zap, desc: "Быстрый перевод SOL" },
+            { type: "nft" as const, label: "NFT", icon: FileCheck, desc: "С NFT сертификатом" },
           ].map((item) => (
             <button
               key={item.type}
               type="button"
-              onClick={() => update("deal_type", item.type)}
-              className={`group relative rounded-2xl p-4 text-left transition-all duration-300 ${
+              onClick={() => { update("deal_type", item.type); setStep(Math.max(step, 0)); }}
+              className={`group relative rounded-2xl p-5 text-left transition-all duration-300 ${
                 form.deal_type === item.type ? "glass-card glow-purple border-brand-purple/50" : "glass-card hover:border-brand-purple/30"
               }`}
             >
-              <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${form.deal_type === item.type ? "bg-gradient-purple" : "bg-secondary"}`}>
-                <item.icon className={`h-5 w-5 ${form.deal_type === item.type ? "text-primary-foreground" : "text-muted-foreground"}`} />
+              <div className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl transition-all ${form.deal_type === item.type ? "bg-gradient-purple glow-purple" : "bg-secondary"}`}>
+                <item.icon className={`h-6 w-6 ${form.deal_type === item.type ? "text-primary-foreground" : "text-muted-foreground"}`} />
               </div>
-              <div className="font-medium text-foreground">{item.label}</div>
-              <div className="text-xs text-muted-foreground">{item.desc}</div>
+              <div className="font-semibold text-foreground">{item.label}</div>
+              <div className="text-xs text-muted-foreground mt-1">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -146,22 +183,36 @@ function CreateDealPage() {
           )}
         </div>
 
+        {/* Wallet status */}
+        {connected && publicKey ? (
+          <div className="mt-4 rounded-xl bg-brand-green/10 border border-brand-green/20 px-4 py-3 flex items-center gap-2 text-xs animate-fade-in" style={{ animationDelay: "170ms", animationFillMode: "both" }}>
+            <div className="h-2 w-2 rounded-full bg-brand-green animate-pulse" />
+            <span className="text-brand-green font-medium">Кошелёк подключён</span>
+            <span className="font-mono text-muted-foreground">{publicKey.toBase58().slice(0, 6)}...{publicKey.toBase58().slice(-4)}</span>
+            <span className="text-muted-foreground">• Сделка будет записана в блокчейн</span>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl bg-secondary border border-border px-4 py-3 flex items-center gap-2 text-xs animate-fade-in" style={{ animationDelay: "170ms", animationFillMode: "both" }}>
+            <span className="text-muted-foreground">💡 Подключите кошелёк Solana для записи сделки в блокчейн</span>
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div className="glass-card rounded-2xl p-6 space-y-5 animate-fade-in" style={{ animationDelay: "200ms", animationFillMode: "both" }}>
             <div>
               <label className="mb-2 block text-sm font-medium text-foreground">Название сделки <span className="text-destructive">*</span></label>
-              <input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="Например: Разработка веб-сайта" maxLength={100} className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors" />
+              <input value={form.title} onChange={(e) => { update("title", e.target.value); setStep(Math.max(step, 1)); }} placeholder="Например: Разработка веб-сайта" maxLength={100} className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-foreground">Условия сделки (описание)</label>
+              <label className="mb-2 block text-sm font-medium text-foreground">Условия сделки</label>
               <textarea value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Опишите условия: что должен сделать исполнитель, сроки, критерии приёмки..." rows={5} maxLength={2000} className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors resize-none" />
-              <p className="mt-1 text-xs text-muted-foreground">AI проанализирует условия и подберёт релевантные статьи закона</p>
+              <p className="mt-1 text-xs text-muted-foreground">AI проанализирует условия и подберёт статьи закона</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-foreground">Сумма (SOL) <span className="text-destructive">*</span></label>
-                <input type="number" step="0.0001" min="0" value={form.amount} onChange={(e) => update("amount", e.target.value)} placeholder="0.00" className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors" />
+                <input type="number" step="0.0001" min="0" value={form.amount} onChange={(e) => { update("amount", e.target.value); setStep(Math.max(step, 2)); }} placeholder="0.00" className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-brand-purple transition-colors" />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-foreground">Кошелёк контрагента</label>
@@ -174,8 +225,15 @@ function CreateDealPage() {
             <div className="rounded-xl bg-destructive/10 border border-destructive/30 px-4 py-3 text-sm text-destructive animate-fade-in">{error}</div>
           )}
 
-          <button type="submit" disabled={isSubmitting} className="w-full rounded-xl bg-gradient-purple px-6 py-4 text-base font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50 glow-purple animate-fade-in" style={{ animationDelay: "300ms", animationFillMode: "both" }}>
-            {isSubmitting ? "Создание сделки..." : "🔒 Создать сделку и заморозить в Escrow"}
+          <button type="submit" disabled={isSubmitting} className="w-full rounded-xl bg-gradient-purple px-6 py-4 text-base font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50 glow-purple animate-fade-in flex items-center justify-center gap-2" style={{ animationDelay: "300ms", animationFillMode: "both" }}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Создание сделки...
+              </>
+            ) : (
+              <>🔒 Создать сделку {connected ? "и записать в блокчейн" : ""}</>
+            )}
           </button>
         </form>
       </div>

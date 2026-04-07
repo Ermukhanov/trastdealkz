@@ -19,6 +19,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CreateDealRouteImport } from './routes/create-deal'
 import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserUserIdRouteImport } from './routes/user.$userId'
 import { Route as DealDealIdRouteImport } from './routes/deal.$dealId'
 
 const WalletRoute = WalletRouteImport.update({
@@ -71,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UserUserIdRoute = UserUserIdRouteImport.update({
+  id: '/user/$userId',
+  path: '/user/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DealDealIdRoute = DealDealIdRouteImport.update({
   id: '/deal/$dealId',
   path: '/deal/$dealId',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
+  '/user/$userId': typeof UserUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
+  '/user/$userId': typeof UserUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
+  '/user/$userId': typeof UserUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
+    | '/user/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
+    | '/user/$userId'
   id:
     | '__root__'
     | '/'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
+    | '/user/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   TransactionsRoute: typeof TransactionsRoute
   WalletRoute: typeof WalletRoute
   DealDealIdRoute: typeof DealDealIdRoute
+  UserUserIdRoute: typeof UserUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/user/$userId': {
+      id: '/user/$userId'
+      path: '/user/$userId'
+      fullPath: '/user/$userId'
+      preLoaderRoute: typeof UserUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/deal/$dealId': {
       id: '/deal/$dealId'
       path: '/deal/$dealId'
@@ -267,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   TransactionsRoute: TransactionsRoute,
   WalletRoute: WalletRoute,
   DealDealIdRoute: DealDealIdRoute,
+  UserUserIdRoute: UserUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
