@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,51 +8,48 @@ const corsHeaders = {
 };
 
 const RK_LAWS_CONTEXT = `
-## Законодательство Республики Казахстан (для ссылок в решениях)
+## Законодательство Республики Казахстан
 
 ### Гражданский Кодекс РК (ГК РК)
-- **Ст.349** — Понятие нарушения обязательства. Должник обязан возместить убытки кредитору при неисполнении обязательства.
-- **Ст.350** — Полное возмещение убытков. Включает реальный ущерб и упущенную выгоду.
-- **Ст.353** — Ответственность за неисполнение денежного обязательства. Неустойка за задержку платежа.
-- **Ст.406** — Договор купли-продажи. Продавец обязуется передать товар, покупатель — оплатить.
-- **Ст.545** — Договор имущественного найма (аренды). Права и обязанности арендодателя и арендатора.
-- **Ст.616** — Договор подряда. Подрядчик обязуется выполнить работу, заказчик — принять и оплатить.
-- **Ст.683** — Договор возмездного оказания услуг. Исполнитель обязуется оказать услуги, заказчик — оплатить.
-- **Ст.688** — Договор перевозки. Перевозчик обязуется доставить груз, отправитель — оплатить перевозку.
-- **Ст.700** — Ответственность перевозчика за утрату, недостачу и повреждение груза.
+- **Ст.349** — Нарушение обязательства, возмещение убытков.
+- **Ст.350** — Полное возмещение убытков (реальный ущерб + упущенная выгода).
+- **Ст.353** — Ответственность за неисполнение денежного обязательства.
+- **Ст.406** — Договор купли-продажи.
+- **Ст.545** — Договор аренды.
+- **Ст.616** — Договор подряда.
+- **Ст.683** — Договор возмездного оказания услуг.
+- **Ст.688** — Договор перевозки.
+- **Ст.700** — Ответственность перевозчика.
 
 ### Трудовой Кодекс РК (ТК РК)
-- **Ст.24** — Трудовой договор. Содержание и условия.
-- **Ст.113** — Оплата труда. Заработная плата выплачивается не реже одного раза в месяц.
-- **Ст.131** — Ответственность работодателя за задержку выплаты зарплаты.
-- **Ст.170** — Материальная ответственность работодателя. Обязан возместить ущерб работнику.
-- **Ст.53** — Расторжение трудового договора по инициативе работодателя. Основания и порядок.
+- **Ст.24** — Трудовой договор.
+- **Ст.113** — Оплата труда.
+- **Ст.131** — Ответственность за задержку зарплаты.
+- **Ст.170** — Материальная ответственность работодателя.
+- **Ст.53** — Расторжение трудового договора.
 
-### Предпринимательский Кодекс РК (ПК РК)
-- **Ст.8** — Принцип добросовестности предпринимательской деятельности.
-- **Ст.10** — Защита прав предпринимателей. Государственная и судебная защита.
-
-### Закон РК «Об арбитраже» №488-V от 2016 года
-- Стороны вправе передать гражданско-правовой спор на рассмотрение альтернативного арбитра по взаимному согласию.
-- TrustDeal AI действует как альтернативный арбитр — обе стороны добровольно соглашаются на AI-арбитраж при создании сделки.
+### Закон РК «Об арбитраже» №488-V от 2016
+- Стороны вправе передать спор на рассмотрение AI-арбитру по взаимному согласию.
 `;
 
-const SYSTEM_PROMPT = `Ты — TrustDeal AI, автономный AI-арбитр сделок на блокчейне Solana. Ты работаешь на платформе TrustDeal — децентрализованной системе безопасных сделок.
+const SYSTEM_PROMPT = `Ты — TrustDeal AI, автономный AI-арбитр сделок на блокчейне Solana. Ты работаешь на платформе TrustDeal.
 
 ## Твоя роль
-Ты анализируешь условия сделок, оцениваешь доказательства исполнения и выносишь решения со ссылкой на конкретные статьи законов Республики Казахстан. Ты также можешь видеть данные о транзакциях Solana и состоянии сделок в системе.
+Ты анализируешь условия сделок, оцениваешь доказательства и выносишь решения со ссылкой на законы РК. Ты также видишь данные о транзакциях Solana и состоянии сделок.
 
-## Как ты работаешь
-1. Получаешь условия сделки и тип (поставка, фриланс, аренда, труд, логистика, e-commerce)
-2. Анализируешь доказательства исполнения
-3. Ссылаешься на конкретную статью закона РК
-4. Выносишь решение: ✅ выполнено / ⚠️ частично / ❌ не выполнено
-5. Определяешь процент выплаты (0-100%)
+## Ты можешь управлять сделками:
+Если пользователь предоставляет контекст сделки (deal_context), ты ВИДИШЬ:
+- Все поля сделки (название, сумма, статус, тип, категория)
+- Доказательства исполнения
+- Хэш транзакции в блокчейне Solana
+- Кошелёк контрагента
+- Историю изменений
 
 ## При каждом решении ОБЯЗАТЕЛЬНО:
-- Ссылайся на конкретную статью закона РК (например: "На основании ст.349 ГК РК п.1...")
+- Ссылайся на конкретную статью закона РК
 - Объясняй решение простым языком на русском
-- Указывай процент выплаты
+- Указывай процент выплаты (0-100%)
+- Если видишь tx_signature — подтверди что транзакция зафиксирована в блокчейне
 
 ## Ключевые ниши:
 - **B2B Поставки** → ГК РК ст.349, 350, 406
@@ -67,13 +65,50 @@ ${RK_LAWS_CONTEXT}
 - Используй эмодзи и **markdown**
 - Будь кратким и по делу
 - Всегда отвечай на русском языке
-- При анализе сделки структурируй ответ: Условия → Анализ → Закон → Решение → Процент выплаты`;
+- Структурируй: Условия → Анализ → Закон → Решение → Процент выплаты
+- Если есть blockchain данные — упомяни их`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, deal_context, action } = await req.json();
+
+    // If AI needs to manage a deal, use supabase
+    let dealActionResult = null;
+    if (action && deal_context?.deal_id) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sb = createClient(supabaseUrl, serviceKey);
+
+      if (action === "complete") {
+        const { error } = await sb.from("deals").update({ status: "completed" }).eq("id", deal_context.deal_id);
+        dealActionResult = error ? `Ошибка: ${error.message}` : "Сделка завершена ✅";
+      } else if (action === "dispute") {
+        const { error } = await sb.from("deals").update({ status: "disputed" }).eq("id", deal_context.deal_id);
+        dealActionResult = error ? `Ошибка: ${error.message}` : "Спор открыт ⚠️";
+      } else if (action === "verdict") {
+        const verdictMsg = messages[messages.length - 1]?.content || "";
+        const percentMatch = verdictMsg.match(/(\d{1,3})%/);
+        const percent = percentMatch ? parseInt(percentMatch[1]) : null;
+        const lawMatch = verdictMsg.match(/(ст\.\d+\s*(?:ГК|ТК|ПК)\s*РК)/i);
+        const lawRef = lawMatch ? lawMatch[1] : null;
+
+        await sb.from("deals").update({
+          verdict_text: verdictMsg.slice(0, 2000),
+          verdict_percent: percent,
+          verdict_law_ref: lawRef,
+        }).eq("id", deal_context.deal_id);
+        dealActionResult = "Вердикт сохранён в сделке";
+      }
+    }
+
+    // Enrich messages with deal context
+    const enrichedMessages = [...messages];
+    if (deal_context) {
+      const contextMsg = `[КОНТЕКСТ СДЕЛКИ]\nНазвание: ${deal_context.title}\nСумма: ${deal_context.amount} SOL\nСтатус: ${deal_context.status}\nТип: ${deal_context.deal_type}\nКатегория: ${deal_context.category}\nОписание: ${deal_context.description || "Не указано"}\nДоказательства: ${deal_context.proof_description || "Нет"}\nHash доказательства: ${deal_context.proof_hash || "Нет"}\nТранзакция: ${deal_context.tx_signature || "Нет"}\nКошелёк контрагента: ${deal_context.counterparty_wallet || "Не указан"}\nNFT: ${deal_context.nft_mint_address || "Нет"}\n${dealActionResult ? `[ДЕЙСТВИЕ AI]: ${dealActionResult}` : ""}`;
+      enrichedMessages.unshift({ role: "system", content: contextMsg });
+    }
 
     const ALEM_AI_KEY = Deno.env.get("ALEM_AI_API_KEY");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -83,12 +118,10 @@ serve(async (req) => {
     let model: string;
 
     if (ALEM_AI_KEY) {
-      // Alem AI — primary
       apiUrl = "https://llm.alem.ai/v1/chat/completions";
       apiKey = ALEM_AI_KEY;
       model = "alemllm";
     } else if (LOVABLE_API_KEY) {
-      // Lovable AI — fallback
       apiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
       apiKey = LOVABLE_API_KEY;
       model = "google/gemini-3-flash-preview";
@@ -106,7 +139,7 @@ serve(async (req) => {
         model,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          ...messages,
+          ...enrichedMessages,
         ],
         stream: true,
       }),
@@ -115,13 +148,8 @@ serve(async (req) => {
     if (!response.ok) {
       const status = response.status;
       if (status === 429) {
-        return new Response(JSON.stringify({ error: "Превышен лимит запросов. Попробуйте через минуту." }), {
+        return new Response(JSON.stringify({ error: "Превышен лимит запросов." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (status === 402) {
-        return new Response(JSON.stringify({ error: "Недостаточно средств на API аккаунте." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
