@@ -2,6 +2,7 @@
 // Полный флоу: Wallet → Create Deal → Escrow → Dispute → AI Verdict → NFT Cert
 
 import { useState, useCallback } from "react";
+import { ExternalLink, ChainIcon, Zap, Lock, CheckCircle } from "lucide-react";
 import {
   useSolana,
   DealType,
@@ -16,6 +17,7 @@ import {
   getDealCertificateSvg,
   NftCertificateMetadata,
 } from "../services/nftCertificate";
+import PriceMonitor from "./PriceMonitor";
 
 type FlowStep = "wallet" | "create" | "escrow" | "active" | "dispute" | "verdict" | "nft";
 
