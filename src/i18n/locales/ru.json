@@ -5,9 +5,21 @@
     "connectWallet": "🔗 Подключить Phantom"
   },
   "hero": {
-    "title": "Решаем споры за 30 секунд",
-    "description": "Первый автономный AI-арбитр на блокчейне Solana. Деньги в эскроу, AI анализирует доказательства по законам РК",
-    "getStarted": "🚀 Начать"
+    "badge": "Solana Blockchain + AI Арбитраж + Законы РК",
+    "title": {
+      "part1": "AI создаёт, контролирует и",
+      "highlight": "завершает сделки",
+      "part2": "автоматически"
+    },
+    "description": "Безопасные сделки на блокчейне Solana. AI арбитраж по законам РК. Эскроу. NFT сертификат завершения.",
+    "cta_create": "Создать сделку",
+    "cta_wallet": "Подключить кошелёк",
+    "feature1_label": "Solana Escrow",
+    "feature1_desc": "Безопасная заморозка SOL",
+    "feature2_label": "AI Арбитр",
+    "feature2_desc": "Законы РК автоматически",
+    "feature3_label": "NFT Сертификат",
+    "feature3_desc": "Подтверждение on-chain"
   },
   "features": {
     "escrow": "🏦 Защищённый эскроу",

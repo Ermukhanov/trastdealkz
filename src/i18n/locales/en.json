@@ -5,9 +5,21 @@
     "connectWallet": "🔗 Connect Phantom"
   },
   "hero": {
-    "title": "Resolve disputes in 30 seconds",
-    "description": "First autonomous AI arbitrator on Solana blockchain. Funds in escrow, AI analyzes evidence under Kazakhstan laws",
-    "getStarted": "🚀 Get Started"
+    "badge": "Solana Blockchain + AI Arbitration + Kazakhstan Laws",
+    "title": {
+      "part1": "AI creates, controls, and",
+      "highlight": "completes deals",
+      "part2": "automatically"
+    },
+    "description": "Secure deals on Solana blockchain. AI arbitration under Kazakhstan laws. Escrow. NFT completion certificate.",
+    "cta_create": "Create Deal",
+    "cta_wallet": "Connect Wallet",
+    "feature1_label": "Solana Escrow",
+    "feature1_desc": "Secure SOL freeze",
+    "feature2_label": "AI Arbitrator",
+    "feature2_desc": "Kazakhstan laws automatically",
+    "feature3_label": "NFT Certificate",
+    "feature3_desc": "On-chain verification"
   },
   "features": {
     "escrow": "🏦 Secure Escrow",
