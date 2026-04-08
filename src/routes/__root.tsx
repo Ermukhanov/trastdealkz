@@ -1,6 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import Navbar from "@/components/Navbar";
 import SolanaWalletProvider from "@/components/SolanaWalletProvider";
+import "@/i18n/config";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {

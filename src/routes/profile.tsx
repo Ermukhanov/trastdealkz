@@ -104,6 +104,34 @@ function ProfilePage() {
           </div>
         </div>
 
+        {/* Settings: Theme & Language */}
+        <div className="glass-card rounded-2xl p-6 animate-fade-in" style={{ animationDelay: "50ms", animationFillMode: "both" }}>
+          <h3 className="font-semibold text-foreground mb-4">⚙️ Настройки</h3>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 rounded-xl border border-border bg-secondary px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === "dark" ? "Светлая тема" : "Тёмная тема"}
+            </button>
+            {["ru", "en", "kk"].map((lng) => (
+              <button
+                key={lng}
+                onClick={() => i18n.changeLanguage(lng)}
+                className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${
+                  i18n.language === lng
+                    ? "border-brand-purple bg-brand-purple/15 text-brand-purple"
+                    : "border-border bg-secondary text-foreground hover:bg-accent"
+                }`}
+              >
+                <Globe className="h-4 w-4" />
+                {lng === "ru" ? "🇷🇺 Русский" : lng === "en" ? "🇬🇧 English" : "🇰🇿 Қазақша"}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* TrustScore + Stats */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
           <div className="glass-card rounded-2xl p-5 text-center">
