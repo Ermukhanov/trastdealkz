@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import logoImg from "@/assets/logo.png";
+import ThemeToggle from "@/components/ThemeToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const navItems = [
   { to: "/", label: "Главная", icon: Home },
@@ -92,7 +94,10 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeToggle />
+
             {/* Search button */}
             <button
               onClick={() => setShowSearch(!showSearch)}

@@ -62,18 +62,13 @@ function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setError("");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/dashboard" },
     });
-
-    if (result.error) {
-      setError(result.error instanceof Error ? result.error.message : "Ошибка входа через Google");
-      return;
+    if (oauthError) {
+      setError(oauthError.message);
     }
-
-    if (result.redirected) return;
-
-    navigate({ to: "/dashboard" });
   };
 
   return (

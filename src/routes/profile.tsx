@@ -5,9 +5,12 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import {
   User, Shield, Star, TrendingUp, Award,
   ArrowUpRight, Clock, CheckCircle, XCircle, AlertTriangle,
+  Sun, Moon, Globe,
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Tables } from "@/integrations/supabase/types";
+import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -19,6 +22,8 @@ function ProfilePage() {
   const [deals, setDeals] = useState<Tables<"deals">[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const load = async () => {
@@ -96,6 +101,34 @@ function ProfilePage() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Settings: Theme & Language */}
+        <div className="glass-card rounded-2xl p-6 animate-fade-in" style={{ animationDelay: "50ms", animationFillMode: "both" }}>
+          <h3 className="font-semibold text-foreground mb-4">⚙️ Настройки</h3>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 rounded-xl border border-border bg-secondary px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === "dark" ? "Светлая тема" : "Тёмная тема"}
+            </button>
+            {["ru", "en", "kk"].map((lng) => (
+              <button
+                key={lng}
+                onClick={() => i18n.changeLanguage(lng)}
+                className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${
+                  i18n.language === lng
+                    ? "border-brand-purple bg-brand-purple/15 text-brand-purple"
+                    : "border-border bg-secondary text-foreground hover:bg-accent"
+                }`}
+              >
+                <Globe className="h-4 w-4" />
+                {lng === "ru" ? "🇷🇺 Русский" : lng === "en" ? "🇬🇧 English" : "🇰🇿 Қазақша"}
+              </button>
+            ))}
           </div>
         </div>
 

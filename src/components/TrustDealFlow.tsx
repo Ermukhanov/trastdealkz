@@ -2,7 +2,7 @@
 // Полный флоу: Wallet → Create Deal → Escrow → Dispute → AI Verdict → NFT Cert
 
 import { useState, useCallback } from "react";
-import { ExternalLink, ChainIcon, Zap, Lock, CheckCircle } from "lucide-react";
+import { ExternalLink, Link2, Zap, Lock, CheckCircle } from "lucide-react";
 import {
   useSolana,
   DealType,
