@@ -237,6 +237,51 @@ function DealDetailPage() {
     if (publicKey && connected) await recordOnChain("COMPLETE");
   };
 
+  const mintNft = async () => {
+    if (!deal || !publicKey || !connected) return;
+    setNftMinting(true);
+    try {
+      const wallet = { publicKey, signTransaction: async (tx: any) => tx };
+      const meta: NftCertificateMetadata = {
+        dealId: parseInt(deal.id.slice(0, 8), 16) || 1,
+        dealType: deal.deal_type,
+        amountSOL: Number(deal.amount),
+        creator: deal.user_id.slice(0, 20),
+        counterparty: deal.counterparty_wallet || "N/A",
+        completedAt: deal.updated_at,
+        aiVerdictHash: deal.proof_hash || "no-verdict",
+        lawReference: deal.verdict_law_ref || "ГК РК ст. 349",
+        txSignature: deal.tx_signature || "pending",
+        trustDealVersion: "1.0.0",
+      };
+
+      const memo = buildDealMemo(deal.id, "MINT_NFT", `cert-${deal.id.slice(0, 8)}`);
+      const tx = await createMemoTx({ signer: publicKey, memo });
+      const sig = await sendTransaction(tx, connection);
+      await connection.confirmTransaction(sig, "confirmed");
+
+      const encoder = new TextEncoder();
+      const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(JSON.stringify(meta)));
+      const mintHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 44);
+
+      await supabase.from("deals").update({ nft_mint_address: mintHex, tx_signature: sig }).eq("id", deal.id);
+      setDeal({ ...deal, nft_mint_address: mintHex, tx_signature: sig });
+
+      const svgData = getDealCertificateSvg(meta);
+      const svgUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgData)))}`;
+
+      setNftResult({
+        mintAddress: mintHex,
+        explorerUrl: `https://explorer.solana.com/tx/${sig}?cluster=devnet`,
+        imageUrl: svgUrl,
+      });
+    } catch (e: any) {
+      console.error("NFT mint error:", e);
+      alert("Ошибка минтинга NFT: " + (e.message || ""));
+    }
+    setNftMinting(false);
+  };
+
   const disputeDeal = async () => {
     if (!deal) return;
     await supabase.from("deals").update({ status: "disputed" }).eq("id", deal.id);
