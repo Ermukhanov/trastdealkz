@@ -22,6 +22,8 @@ function ProfilePage() {
   const [deals, setDeals] = useState<Tables<"deals">[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const load = async () => {
