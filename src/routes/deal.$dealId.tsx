@@ -62,6 +62,10 @@ function DealDetailPage() {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewDone, setReviewDone] = useState(false);
 
+  // NFT minting
+  const [nftMinting, setNftMinting] = useState(false);
+  const [nftResult, setNftResult] = useState<{ mintAddress: string; explorerUrl: string; imageUrl: string } | null>(null);
+
   useEffect(() => {
     const load = async () => {
       const [{ data }, { data: { user } }] = await Promise.all([
