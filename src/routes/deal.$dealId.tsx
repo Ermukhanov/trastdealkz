@@ -574,6 +574,52 @@ function DealDetailPage() {
             ✅ Отзыв отправлен!
           </div>
         )}
+
+        {/* NFT Certificate Minting */}
+        {deal.status === "completed" && connected && (
+          <div className="glass-card rounded-2xl p-5 mt-4 animate-fade-in" style={{ animationDelay: "280ms", animationFillMode: "both" }}>
+            <div className="flex items-center gap-2 mb-3">
+              <FileCheck className="h-4 w-4 text-brand-green" />
+              <h3 className="font-semibold text-foreground text-sm">NFT Сертификат сделки</h3>
+            </div>
+
+            {deal.nft_mint_address || nftResult ? (
+              <div className="space-y-3">
+                <div className="rounded-xl bg-brand-green/10 border border-brand-green/20 p-4">
+                  <p className="text-sm text-brand-green font-medium">🏅 NFT сертификат создан!</p>
+                  <p className="text-xs font-mono text-muted-foreground mt-1">Mint: {deal.nft_mint_address || nftResult?.mintAddress}</p>
+                </div>
+                {nftResult?.imageUrl && (
+                  <img src={nftResult.imageUrl} alt="NFT Certificate" className="w-full rounded-xl border border-border" />
+                )}
+                {(nftResult?.explorerUrl || deal.tx_signature) && (
+                  <a
+                    href={nftResult?.explorerUrl || `https://explorer.solana.com/tx/${deal.tx_signature}?cluster=devnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-brand-green hover:underline"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> Посмотреть в Solana Explorer
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Создайте неизменяемый NFT сертификат этой сделки на блокчейне Solana (devnet).
+                </p>
+                <button
+                  onClick={mintNft}
+                  disabled={nftMinting}
+                  className="w-full rounded-xl bg-gradient-green px-4 py-3 text-sm font-semibold text-brand-green-foreground hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                >
+                  {nftMinting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileCheck className="h-4 w-4" />}
+                  {nftMinting ? "Минтинг NFT..." : "🏅 Минтить NFT сертификат"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
