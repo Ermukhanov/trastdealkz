@@ -5,9 +5,12 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import {
   User, Shield, Star, TrendingUp, Award,
   ArrowUpRight, Clock, CheckCircle, XCircle, AlertTriangle,
+  Sun, Moon, Globe,
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Tables } from "@/integrations/supabase/types";
+import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
