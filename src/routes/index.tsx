@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
@@ -16,6 +18,27 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const navigate = useNavigate();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        navigate({ to: "/dashboard" });
+      } else {
+        setChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  if (!checked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-purple border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
     <>
       <HeroSection />
