@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { createTransferTx, createMemoTx, buildDealMemo, verifyTransaction, connection } from "@/lib/solana";
 import { PublicKey } from "@solana/web3.js";
+import { mintDealNftCertificate, type NftCertificateMetadata, getDealCertificateSvg } from "@/services/nftCertificate";
 
 export const Route = createFileRoute("/deal/$dealId")({
   component: DealDetailPage,
