@@ -77,6 +77,112 @@ export type Database = {
         }
         Relationships: []
       }
+      disputes: {
+        Row: {
+          created_at: string
+          deal_id: string
+          deposit_amount: number
+          evidence_urls: string[] | null
+          id: string
+          initiator_id: string
+          jury_count: number
+          resolved_at: string | null
+          side_a_claim: string
+          side_b_claim: string | null
+          status: Database["public"]["Enums"]["dispute_status"]
+          updated_at: string
+          verdict: string | null
+          verdict_percent: number | null
+          verdict_side: Database["public"]["Enums"]["vote_choice"] | null
+        }
+        Insert: {
+          created_at?: string
+          deal_id: string
+          deposit_amount?: number
+          evidence_urls?: string[] | null
+          id?: string
+          initiator_id: string
+          jury_count?: number
+          resolved_at?: string | null
+          side_a_claim: string
+          side_b_claim?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+          verdict?: string | null
+          verdict_percent?: number | null
+          verdict_side?: Database["public"]["Enums"]["vote_choice"] | null
+        }
+        Update: {
+          created_at?: string
+          deal_id?: string
+          deposit_amount?: number
+          evidence_urls?: string[] | null
+          id?: string
+          initiator_id?: string
+          jury_count?: number
+          resolved_at?: string | null
+          side_a_claim?: string
+          side_b_claim?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+          verdict?: string | null
+          verdict_percent?: number | null
+          verdict_side?: Database["public"]["Enums"]["vote_choice"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jury_votes: {
+        Row: {
+          dispute_id: string
+          id: string
+          is_majority: boolean | null
+          juror_id: string
+          penalty_amount: number | null
+          reasoning: string | null
+          reward_amount: number | null
+          vote: Database["public"]["Enums"]["vote_choice"]
+          voted_at: string
+        }
+        Insert: {
+          dispute_id: string
+          id?: string
+          is_majority?: boolean | null
+          juror_id: string
+          penalty_amount?: number | null
+          reasoning?: string | null
+          reward_amount?: number | null
+          vote: Database["public"]["Enums"]["vote_choice"]
+          voted_at?: string
+        }
+        Update: {
+          dispute_id?: string
+          id?: string
+          is_majority?: boolean | null
+          juror_id?: string
+          penalty_amount?: number | null
+          reasoning?: string | null
+          reward_amount?: number | null
+          vote?: Database["public"]["Enums"]["vote_choice"]
+          voted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jury_votes_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -156,6 +262,53 @@ export type Database = {
           },
         ]
       }
+      risk_assessments: {
+        Row: {
+          affiliation_score: number
+          ai_reasoning: string | null
+          contract_clarity_score: number
+          created_at: string
+          deal_id: string
+          details: Json | null
+          id: string
+          overall_risk: Database["public"]["Enums"]["risk_level"]
+          overall_score: number
+          price_anomaly_score: number
+        }
+        Insert: {
+          affiliation_score?: number
+          ai_reasoning?: string | null
+          contract_clarity_score?: number
+          created_at?: string
+          deal_id: string
+          details?: Json | null
+          id?: string
+          overall_risk?: Database["public"]["Enums"]["risk_level"]
+          overall_score?: number
+          price_anomaly_score?: number
+        }
+        Update: {
+          affiliation_score?: number
+          ai_reasoning?: string | null
+          contract_clarity_score?: number
+          created_at?: string
+          deal_id?: string
+          details?: Json | null
+          id?: string
+          overall_risk?: Database["public"]["Enums"]["risk_level"]
+          overall_score?: number
+          price_anomaly_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessments_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -166,6 +319,9 @@ export type Database = {
     Enums: {
       deal_status: "pending" | "active" | "completed" | "disputed" | "cancelled"
       deal_type: "escrow" | "direct" | "nft"
+      dispute_status: "pending" | "voting" | "resolved" | "cancelled"
+      risk_level: "low" | "medium" | "high" | "critical"
+      vote_choice: "side_a" | "side_b" | "split"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -295,6 +451,9 @@ export const Constants = {
     Enums: {
       deal_status: ["pending", "active", "completed", "disputed", "cancelled"],
       deal_type: ["escrow", "direct", "nft"],
+      dispute_status: ["pending", "voting", "resolved", "cancelled"],
+      risk_level: ["low", "medium", "high", "critical"],
+      vote_choice: ["side_a", "side_b", "split"],
     },
   },
 } as const
