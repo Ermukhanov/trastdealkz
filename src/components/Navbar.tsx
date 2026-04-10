@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn, LogOut, Bell, Menu, X, Search } from "lucide-react";
+import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn, LogOut, Bell, Menu, X, Search, Scale, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
