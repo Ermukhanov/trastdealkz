@@ -62,12 +62,19 @@ function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setError("");
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/dashboard" },
-    });
-    if (oauthError) {
-      setError(oauthError.message);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + "/auth/callback",
+        },
+      });
+
+      if (error) {
+        setError(error.message || "Ошибка входа через Google");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ошибка входа через Google");
     }
   };
 
