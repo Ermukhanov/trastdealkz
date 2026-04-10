@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as TransactionsRouteImport } from './routes/transactions'
+import { Route as RiskAuditRouteImport } from './routes/risk-audit'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DisputesRouteImport } from './routes/disputes'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CreateDealRouteImport } from './routes/create-deal'
@@ -32,6 +34,11 @@ const TransactionsRoute = TransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RiskAuditRoute = RiskAuditRouteImport.update({
+  id: '/risk-audit',
+  path: '/risk-audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -45,6 +52,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisputesRoute = DisputesRouteImport.update({
+  id: '/disputes',
+  path: '/disputes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -89,9 +101,11 @@ export interface FileRoutesByFullPath {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/disputes': typeof DisputesRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
@@ -103,9 +117,11 @@ export interface FileRoutesByTo {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/disputes': typeof DisputesRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
@@ -118,9 +134,11 @@ export interface FileRoutesById {
   '/create-deal': typeof CreateDealRoute
   '/dashboard': typeof DashboardRoute
   '/deals': typeof DealsRoute
+  '/disputes': typeof DisputesRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
   '/deal/$dealId': typeof DealDealIdRoute
@@ -134,9 +152,11 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/disputes'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/risk-audit'
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
@@ -148,9 +168,11 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/disputes'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/risk-audit'
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
@@ -162,9 +184,11 @@ export interface FileRouteTypes {
     | '/create-deal'
     | '/dashboard'
     | '/deals'
+    | '/disputes'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/risk-audit'
     | '/transactions'
     | '/wallet'
     | '/deal/$dealId'
@@ -177,9 +201,11 @@ export interface RootRouteChildren {
   CreateDealRoute: typeof CreateDealRoute
   DashboardRoute: typeof DashboardRoute
   DealsRoute: typeof DealsRoute
+  DisputesRoute: typeof DisputesRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
+  RiskAuditRoute: typeof RiskAuditRoute
   TransactionsRoute: typeof TransactionsRoute
   WalletRoute: typeof WalletRoute
   DealDealIdRoute: typeof DealDealIdRoute
@@ -202,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransactionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/risk-audit': {
+      id: '/risk-audit'
+      path: '/risk-audit'
+      fullPath: '/risk-audit'
+      preLoaderRoute: typeof RiskAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -221,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/disputes': {
+      id: '/disputes'
+      path: '/disputes'
+      fullPath: '/disputes'
+      preLoaderRoute: typeof DisputesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -281,9 +321,11 @@ const rootRouteChildren: RootRouteChildren = {
   CreateDealRoute: CreateDealRoute,
   DashboardRoute: DashboardRoute,
   DealsRoute: DealsRoute,
+  DisputesRoute: DisputesRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
+  RiskAuditRoute: RiskAuditRoute,
   TransactionsRoute: TransactionsRoute,
   WalletRoute: WalletRoute,
   DealDealIdRoute: DealDealIdRoute,

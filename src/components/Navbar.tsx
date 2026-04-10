@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn, LogOut, Bell, Menu, X, Search } from "lucide-react";
+import { Home, LayoutDashboard, FileText, Bot, User, Wallet, LogIn, LogOut, Bell, Menu, X, Search, Scale, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -11,6 +11,8 @@ const navItems = [
   { to: "/", label: "Главная", icon: Home },
   { to: "/dashboard", label: "Дашборд", icon: LayoutDashboard },
   { to: "/deals", label: "Сделки", icon: FileText },
+  { to: "/disputes", label: "DAO", icon: Scale },
+  { to: "/risk-audit", label: "Аудит", icon: ShieldAlert },
   { to: "/ai-assistant", label: "AI", icon: Bot },
   { to: "/wallet", label: "Кошелёк", icon: Wallet },
   { to: "/profile", label: "Профиль", icon: User },
