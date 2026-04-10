@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   Shield, Users, Vote, AlertTriangle, CheckCircle, Clock,
-  Gavel, Plus, ChevronRight, Award, TrendingUp, Scale,
-  ThumbsUp, ThumbsDown, Minus, Eye, Sparkles,
+  Gavel, Plus, Award, Scale,
+  ThumbsUp, ThumbsDown, Minus, Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/disputes")({

@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import {
-  ShieldAlert, Search, AlertTriangle, CheckCircle, XCircle,
-  Activity, Link2, DollarSign, FileText, Loader2, TrendingUp,
-  Eye, Sparkles, BarChart3, Brain,
+  ShieldAlert, Search, Link2, DollarSign, FileText, Loader2,
+  Sparkles, BarChart3, Brain,
 } from "lucide-react";
 
 export const Route = createFileRoute("/risk-audit")({

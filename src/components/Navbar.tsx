@@ -11,6 +11,8 @@ const navItems = [
   { to: "/", label: "Главная", icon: Home },
   { to: "/dashboard", label: "Дашборд", icon: LayoutDashboard },
   { to: "/deals", label: "Сделки", icon: FileText },
+  { to: "/disputes", label: "DAO", icon: Bot },
+  { to: "/risk-audit", label: "Аудит", icon: Bot },
   { to: "/ai-assistant", label: "AI", icon: Bot },
   { to: "/wallet", label: "Кошелёк", icon: Wallet },
   { to: "/profile", label: "Профиль", icon: User },
