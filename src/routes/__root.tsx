@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import Navbar from "@/components/Navbar";
+import BottomNav from "@/components/BottomNav";
 import SolanaWalletProvider from "@/components/SolanaWalletProvider";
 import "@/i18n/config";
 import appCss from "../styles.css?url";
@@ -63,7 +64,10 @@ function RootComponent() {
   return (
     <SolanaWalletProvider>
       <Navbar />
-      <Outlet />
+      <div className="pb-20 md:pb-0">
+        <Outlet />
+      </div>
+      <BottomNav />
     </SolanaWalletProvider>
   );
 }

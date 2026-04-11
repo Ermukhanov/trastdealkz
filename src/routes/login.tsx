@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -9,6 +11,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,23 +66,27 @@ function LoginPage() {
   const handleGoogleLogin = async () => {
     setError("");
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin + "/auth/callback",
-        },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
 
-      if (error) {
-        setError(error.message || "Ошибка входа через Google");
+      if (result.error) {
+        setError(result.error instanceof Error ? result.error.message : "Ошибка входа через Google");
+        return;
       }
+
+      if (result.redirected) {
+        return;
+      }
+
+      navigate({ to: "/dashboard" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ошибка входа через Google");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-16">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-16 pb-24">
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-purple glow-purple">
@@ -94,7 +101,6 @@ function LoginPage() {
         </div>
 
         <div className="glass-card rounded-2xl p-6 space-y-5">
-          {/* Google OAuth */}
           <button
             onClick={handleGoogleLogin}
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-secondary px-4 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:scale-[1.02]"
@@ -117,7 +123,6 @@ function LoginPage() {
             </div>
           </div>
 
-          {/* Email/Password */}
           <form onSubmit={handleEmailAuth} className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">Email</label>
