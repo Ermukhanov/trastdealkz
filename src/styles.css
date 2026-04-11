@@ -265,3 +265,8 @@
   background: oklch(0.65 0.28 290 / 30%);
   color: oklch(0.98 0 0);
 }
+
+/* Safe area for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
