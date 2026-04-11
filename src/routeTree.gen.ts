@@ -23,6 +23,7 @@ import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserUserIdRouteImport } from './routes/user.$userId'
 import { Route as DealDealIdRouteImport } from './routes/deal.$dealId'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
@@ -94,6 +95,11 @@ const DealDealIdRoute = DealDealIdRouteImport.update({
   path: '/deal/$dealId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/deal/$dealId': typeof DealDealIdRoute
   '/user/$userId': typeof UserUserIdRoute
 }
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/deal/$dealId': typeof DealDealIdRoute
   '/user/$userId': typeof UserUserIdRoute
 }
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/risk-audit': typeof RiskAuditRoute
   '/transactions': typeof TransactionsRoute
   '/wallet': typeof WalletRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/deal/$dealId': typeof DealDealIdRoute
   '/user/$userId': typeof UserUserIdRoute
 }
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/risk-audit'
     | '/transactions'
     | '/wallet'
+    | '/auth/callback'
     | '/deal/$dealId'
     | '/user/$userId'
   fileRoutesByTo: FileRoutesByTo
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/risk-audit'
     | '/transactions'
     | '/wallet'
+    | '/auth/callback'
     | '/deal/$dealId'
     | '/user/$userId'
   id:
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/risk-audit'
     | '/transactions'
     | '/wallet'
+    | '/auth/callback'
     | '/deal/$dealId'
     | '/user/$userId'
   fileRoutesById: FileRoutesById
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   RiskAuditRoute: typeof RiskAuditRoute
   TransactionsRoute: typeof TransactionsRoute
   WalletRoute: typeof WalletRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   DealDealIdRoute: typeof DealDealIdRoute
   UserUserIdRoute: typeof UserUserIdRoute
 }
@@ -312,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealDealIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   RiskAuditRoute: RiskAuditRoute,
   TransactionsRoute: TransactionsRoute,
   WalletRoute: WalletRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   DealDealIdRoute: DealDealIdRoute,
   UserUserIdRoute: UserUserIdRoute,
 }
